@@ -1,4 +1,6 @@
-#include "main.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "../include/main.h"
 
 int main(int argc, char *argv[]){
 
@@ -6,7 +8,7 @@ int main(int argc, char *argv[]){
 
 	//just make a function call to code in phase1.c
 	//phase1 - Data Partition Phase
-
+	traverse();
 	//create pipes
 	
 	//just make a function call to code in phase2.c

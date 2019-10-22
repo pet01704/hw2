@@ -1,4 +1,9 @@
-// Add Guard to header file (google what are guards)
-// Function prototypes to 
-//			Traverse the Folder
-//			Partition the text file paths to 'm' files 
+#ifndef __PHASE1_H
+#define __PHASE1_H
+
+
+void createMapperInput(char* path);
+void traverse(char* path);
+void partition(int m);
+
+#endif // __PHASE1_H
