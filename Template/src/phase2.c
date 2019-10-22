@@ -5,3 +5,5 @@
 	2)	Creates a list of letter, wordcount from the text files found in the Mapper_i.txt
 	3)	Send the list to Reducer via pipes with proper closing of ends
 */
+
+//git test
