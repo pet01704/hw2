@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../include/main.h"
-
+#include "../include/phase1.h"
 int main(int argc, char *argv[]){
 
 	// argument count check
 
 	//just make a function call to code in phase1.c
 	//phase1 - Data Partition Phase
-	traverse();
+	createMapperInput(argv[1]);
 	//create pipes
 	
 	//just make a function call to code in phase2.c

@@ -15,10 +15,13 @@ int filecount = 0;
 int max = 2;
 
 void traverse(char* path) {
+
 	//2) Traverse the 'Sample' folder hierarchy and insert the text file paths
 	// to Mapper_i.txt in a load balanced manner
 	//opens current directory, argument-pathname (char*)
-	
+	int ps = 100*sizeof(path);
+	char cwd[ps];
+	printf("ps %d\n", ps);
 	DIR *dr = opendir(path); 
 
 	// opendir returns NULL if couldn't open directory
@@ -32,13 +35,13 @@ void traverse(char* path) {
  	int i;
 
  	while ((de = readdir(dr)) != NULL) {
- 		char str[800];
+ 		char str[ps];
  		strcpy(str, path);
-  		char mappername[800];
- 	    char result[80];
- 	    char filecontents[800];
+  		char mappername[ps];
+ 	    char result[ps];
+ 	    char fullPath[ps];
 
- 		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) {
+ 		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..") || !strcmp(de->d_name, ".DS_Store") ) {
  			// ignore . and .. 
  		} else {
  			 // Get entry's information and check for error
@@ -59,27 +62,38 @@ void traverse(char* path) {
  					traverse(str);
  				}
  			} else {
- 				printf("File Name: %s\n\n", de->d_name);
+ 				printf("\nFile Name: %s\n", de->d_name);
  				// create a new 
  				if(i == 0 || i == 2) {
  					printf("creating new mapper file\n");
  					// clear previous mapper name
- 					memset(result, 0, 80);
+ 					memset(result, 0, ps);
  					memset(mappername, 0, 800);
- 					memset(filecontents, 0, 800);
- 				 	// create a mapper file 
- 					strcat(mappername, "Mapper_");
+ 					// create a mapper file 
+       				strcat(mappername, getcwd(cwd, sizeof(cwd)));
+ 					strcat(mappername, "/MapperInput/Mapper_");
  					sprintf(result, "%d", filecount); 
  					strcat(mappername, result);
  					strcat(mappername, ".txt");
  					i = 0;
- 				}
- 				    strcat(filecontents,str);
- 				    strcat(filecontents, "\n");
- 				 	int fd = open(mappername, O_RDWR|O_CREAT, 0666);
- 					write(fd, filecontents, strlen(filecontents));
- 					i++;
  					filecount++;
+ 				}
+ 				    printf("File path: %s\n", str);
+ 				    strcat(str, "\n");
+ 				    printf("mapername %s\n", mappername);
+ 				    memset(fullPath, 0, ps);
+ 			//	    char* cwd = getcwd(result, sizeof(result));
+ 				    // 				    snprintf(fullPath, sizeof(fullPath), "%s%s%s%s", getcwd(cwd, sizeof(cwd)), "/", de->d_name, "\n");
+
+ 				    strcat(fullPath, getcwd(cwd, sizeof(cwd)));
+ 				    strcat(fullPath, "/");
+ 				    strcat(fullPath, de->d_name);
+ 				    strcat(fullPath, "\n");
+ 			     	printf("fullPath: %s\n", fullPath);
+ 				    int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
+ 				 	write(fd, fullPath, strlen(fullPath));
+ 					i++;
+ 					
  			}
 
   		}
@@ -91,15 +105,16 @@ void traverse(char* path) {
 
 void createMapperInput(char* path) {
 	//1) Create 'MapperInput' folder
-	int mapperInput = mkdir("MapperInput", 0700);
+	int mapperInput = mkdir("MapperInput", 0750);
 
  	// Check if folder was created
-	if(mapperInput) {
+	if(mapperInput == -1) {
 		printf("Directory creation was unsuccessful");
 		exit(1);
 	} else {
 		traverse(path);
 	}
+	
 }
 
 
