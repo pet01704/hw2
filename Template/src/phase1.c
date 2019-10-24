@@ -9,22 +9,18 @@
 #include <unistd.h> // for close
 
 #include "../include/phase1.h"
+// max number of filepaths that can be added to mapper_m.txt
+int max = 3;
 // counter for number of files in mapper_m.txt
 int filecount = 0;
-// max number of filepaths that can be added to mapper_m.txt
-int max = 2;
-
 void traverse(char* path) {
 
-	//2) Traverse the 'Sample' folder hierarchy and insert the text file paths
-	// to Mapper_i.txt in a load balanced manner
-	//opens current directory, argument-pathname (char*)
-	int ps = 100*sizeof(path);
+	int ps = 17000*sizeof(path);
 	char cwd[ps];
 	printf("ps %d\n", ps);
 	DIR *dr = opendir(path); 
 
-	// opendir returns NULL if couldn't open directory
+	// open directory check
 	if (dr == NULL) {		
  		printf("Could not open current directory\n" );
 		exit(0);
@@ -39,7 +35,6 @@ void traverse(char* path) {
  		strcpy(str, path);
   		char mappername[ps];
  	    char result[ps];
- 	    char fullPath[ps];
 
  		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..") || !strcmp(de->d_name, ".DS_Store") ) {
  			// ignore . and .. 
@@ -48,7 +43,6 @@ void traverse(char* path) {
    			if (stat(path, &buf) == -1) {
         		continue;
         	}
-
         	// Concatenate file name to str to get path of potential subdirectory 
  			strcat(str,"/");
  			strcat(str, de->d_name);
@@ -56,7 +50,8 @@ void traverse(char* path) {
  			// Check type (directory or file)
  			if (de->d_type == DT_DIR) {
  				// recursion happens if opendir is successful
- 				if (opendir(str) != NULL) {		
+ 				if (opendir(str) != NULL) {	
+ 				 	printf("File path: %s\n", str);	
  					printf("Directory Name: %s\n", de->d_name);
  					printf("Calling recursion subdirectory\n" );
  					traverse(str);
@@ -64,7 +59,7 @@ void traverse(char* path) {
  			} else {
  				printf("\nFile Name: %s\n", de->d_name);
  				// create a new 
- 				if(i == 0 || i == 2) {
+ 				if(i == 0 || i == max) {
  					printf("creating new mapper file\n");
  					// clear previous mapper name
  					memset(result, 0, ps);
@@ -79,34 +74,20 @@ void traverse(char* path) {
  					filecount++;
  				}
  				    printf("File path: %s\n", str);
- 				    strcat(str, "\n");
+ 				    strcat(path, "\n");
  				    printf("mapername %s\n", mappername);
- 				    memset(fullPath, 0, ps);
- 			//	    char* cwd = getcwd(result, sizeof(result));
- 				    // 				    snprintf(fullPath, sizeof(fullPath), "%s%s%s%s", getcwd(cwd, sizeof(cwd)), "/", de->d_name, "\n");
-
- 				    strcat(fullPath, getcwd(cwd, sizeof(cwd)));
- 				    strcat(fullPath, "/");
- 				    strcat(fullPath, de->d_name);
- 				    strcat(fullPath, "\n");
- 			     	printf("fullPath: %s\n", fullPath);
  				    int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
- 				 	write(fd, fullPath, strlen(fullPath));
+ 				 	write(fd, str, strlen(str));
  					i++;
- 					
  			}
-
   		}
  	}
  	closedir(dr);
 }
 
-//	3) 	Ensure to keep track of the number of text files for empty folder condition 
-
 void createMapperInput(char* path) {
-	//1) Create 'MapperInput' folder
+	// Create 'MapperInput' folder
 	int mapperInput = mkdir("MapperInput", 0750);
-
  	// Check if folder was created
 	if(mapperInput == -1) {
 		printf("Directory creation was unsuccessful");
@@ -114,7 +95,6 @@ void createMapperInput(char* path) {
 	} else {
 		traverse(path);
 	}
-	
 }
 
 
