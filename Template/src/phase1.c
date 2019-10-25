@@ -63,6 +63,7 @@ void countFiles(char* path) {
 void traverse(char* path) {
 	int ps = filecount*strlen(path);
 	char cwd[ps];
+	printf("ps %d\n", ps);
 	DIR *dr = opendir(path);
 
 	// open directory check
@@ -101,7 +102,7 @@ void traverse(char* path) {
 				if(i == 0 || i == max) {
 					// clear previous mapper name
 					memset(result, 0, ps);
-					memset(mappername, 0, 800);
+					memset(mappername, 0, ps);
 					// create a mapper file with approriate path
 					strcat(mappername, getcwd(cwd, sizeof(cwd)));
 					strcat(mappername, "/MapperInput/Mapper_");
@@ -111,6 +112,7 @@ void traverse(char* path) {
 					i = 0;
 					m++;
 				}
+				printf("File path: %s\n", str);
 				strcat(str, "\n");
 				// create a MapperInput_m.txt file
 				int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
@@ -119,98 +121,6 @@ void traverse(char* path) {
 				i++;
 			}
 		}
-}
-
-}
-
-void traverse(char* path) {
-	int ps = 17000*sizeof(path);
-	char cwd[ps];
-	printf("ps %d\n", ps);
-	DIR *dr = opendir(path);
-
-	// open directory check
-	if (dr == NULL) {
- 		printf("Could not open current directory\n" );
-		exit(0);
- 	}
-
-	struct dirent *de;
- 	struct stat buf;
-
- 	while ((de = readdir(dr)) != NULL) {
- 		char str[ps];
- 		strcpy(str, path);
-  		char mappername[ps];
- 	    char result[ps];
-
- 		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..") || !strcmp(de->d_name, ".DS_Store") ) {
- 			// ignore . and ..
- 		} else {
- 			 // Get entry's information and check for error
-   			if (stat(path, &buf) == -1) {
-        		continue;
-        	}
-        	// Concatenate file name to str to get path of potential subdirectory
- 			strcat(str,"/");
- 			strcat(str, de->d_name);
-
- 			// Check type (directory or file)
- 			if (de->d_type == DT_DIR) {
- 				// recursion happens if opendir is successful
- 				if (opendir(str) != NULL) {
- 				 	printf("File path: %s\n", str);
- 					printf("Directory Name: %s\n", de->d_name);
- 					printf("Calling recursion subdirectory\n" );
- 					traverse(str);
- 				}
- 			} else {
- 				printf("\nFile Name: %s\n", de->d_name);
- 				// create a new
-
- 				if(i == 0 || i == max) {
- 					printf("creating new mapper file\n");
-					printf("i: %d\n", i);
-					printf("max: %d\n", max);
-					printf("m: %d\n", m);
- 					// clear previous mapper name
- 					memset(result, 0, ps);
- 					memset(mappername, 0, 800);
- 					// create a mapper file
-       		strcat(mappername, getcwd(cwd, sizeof(cwd)));
- 					strcat(mappername, "/MapperInput/Mapper_");
- 					sprintf(result, "%d", m);
- 					strcat(mappername, result);
- 					strcat(mappername, ".txt");
- 					i = 0;
- 					m++;
- 				}
- 				    printf("File path: %s\n", str);
- 				    strcat(str, "\n");
- 				    printf("mapername %s\n", mappername);
- 				    int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
- 				 	  write(fd, str, strlen(str));
- 					  i++;
- 			}
-  		}
- 	}
- 	closedir(dr);
-}
-
-void createMapperInput(char* path, int mappercount) {
-	// Create 'MapperInput' folder
-	int mapperInput = mkdir("MapperInput", 0750);
-	mc = mappercount;
- 	// Check if folder was created
-	if(mapperInput == -1) {
-		printf("Directory creation was unsuccessful");
-		exit(1);
-	} else {
-		countFiles(path);
-		printf("filecount: %f\n",filecount);
-	  max = (filecount/mc)+0.5;
-		printf("max: %d\n", max);
-		traverse(path);
 	}
 	closedir(dr);
 }
