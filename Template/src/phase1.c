@@ -24,7 +24,7 @@ void countFiles(char* path) {
 	DIR *dr = opendir(path);
 	// open directory check
 	if (dr == NULL) {
-		printf("Could not open current directory countfiles\n" );
+		printf("Invalid directory: Open Failed\n" );
 		exit(0);
 	}
 
@@ -61,13 +61,13 @@ void countFiles(char* path) {
 
 // Traverses the directory and its subdirectory
 void traverse(char* path) {
-	int ps = filecount*strlen(path);
-	char cwd[ps];
+	int ps = MAX_SIZE;
+	char cwd[100];
 	DIR *dr = opendir(path);
 
 	// open directory check
 	if (dr == NULL) {
-		printf("Could not open current directory\n" );
+		printf("Invalid directory: Open Failed\n" );
 		exit(0);
 	}
 
@@ -113,9 +113,12 @@ void traverse(char* path) {
 				}
 				strcat(str, "\n");
 				// create a MapperInput_m.txt file
-				int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
+				FILE *fp;
+				fp = fopen(mappername, "a");
 				// write filepath to the file
-				write(fd, str, strlen(str));
+				fprintf(fp,"%s", str);
+				fclose(fp);
+			//	printf("write result: %ld\n", );
 				i++;
 			}
 		}
