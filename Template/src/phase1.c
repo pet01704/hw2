@@ -28,7 +28,7 @@ void traverse(char* path) {
 
 	struct dirent *de;
  	struct stat buf;
- 	int i;
+ 	int i = 0;
 
  	while ((de = readdir(dr)) != NULL) {
  		char str[ps];
@@ -74,7 +74,7 @@ void traverse(char* path) {
  					filecount++;
  				}
  				    printf("File path: %s\n", str);
- 				    strcat(path, "\n");
+ 				    strcat(str, "\n");
  				    printf("mapername %s\n", mappername);
  				    int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
  				 	write(fd, str, strlen(str));
