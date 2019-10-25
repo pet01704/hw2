@@ -63,7 +63,6 @@ void countFiles(char* path) {
 void traverse(char* path) {
 	int ps = filecount*strlen(path);
 	char cwd[ps];
-	printf("ps %d\n", ps);
 	DIR *dr = opendir(path);
 
 	// open directory check
@@ -112,7 +111,6 @@ void traverse(char* path) {
 					i = 0;
 					m++;
 				}
-				printf("File path: %s\n", str);
 				strcat(str, "\n");
 				// create a MapperInput_m.txt file
 				int fd = open(mappername, O_APPEND|O_RDWR|O_CREAT, 0666);
