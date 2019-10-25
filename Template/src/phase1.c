@@ -18,7 +18,7 @@ float filecount = 0;
 float mc = 0;
 // number of filepaths inside a MapperInput_m.txt file
 int i = 0;
-
+int k=0;
 // Counts the number of files in the entire root directory
 void countFiles(char* path) {
 	DIR *dr = opendir(path);
@@ -105,12 +105,19 @@ void traverse(char* path) {
 					// create a mapper file with approriate path
 					strcat(mappername, getcwd(cwd, sizeof(cwd)));
 					strcat(mappername, "/MapperInput/Mapper_");
-					sprintf(result, "%d", m);
+
+					if(m >= mc) {
+						printf("here");
+						sprintf(result, "%d", m%(int)mc);
+					} else {
+						sprintf(result, "%d", m);
+					}
 					strcat(mappername, result);
 					strcat(mappername, ".txt");
 					i = 0;
 					m++;
-				}
+			  }
+
 				strcat(str, "\n");
 				// create a MapperInput_m.txt file
 				FILE *fp;
