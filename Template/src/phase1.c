@@ -1,24 +1,22 @@
-include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <fcntl.h> // for open
-#include <unistd.h> // for close
+#include <fcntl.h> 
+#include <unistd.h>
 #include <math.h>
-
 #include "../include/phase1.h"
+
 // max number of filepaths that can be added to mapper_m.txt
 int max;
 // counter for number of files in mapper_m.txt
 int m = 0;
-
-int filecount = 0;
-int mc = 0;
+float filecount = 0;
+float mc = 0;
 int i = 0;
-
 
 void countFiles(char* path) {
 	DIR *dr = opendir(path);
@@ -145,8 +143,8 @@ void createMapperInput(char* path, int mappercount) {
 		exit(1);
 	} else {
 		countFiles(path);
-		printf("filecount: %d\n",filecount);
-		max = 1 + (filecount/mc);
+		printf("filecount: %f\n",filecount);
+	  max = (filecount/mc)+0.5;
 		printf("max: %d\n", max);
 		traverse(path);
 	}

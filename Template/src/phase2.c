@@ -71,8 +71,7 @@ void map(char* path, int fdout){
 
 
 //n is the number of mapper_i files in mapper input
-void master(){
-	n=10;
+void master(int n){
 	char path[] = "./MapperInput";
 
 	//open the directory /MapperInput
