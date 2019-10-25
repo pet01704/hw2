@@ -1,5 +1,5 @@
 #include "../include/phase2.h"
-//Phase 2
+#include "../include/phase3.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -13,20 +13,18 @@
 #include <ctype.h>
 
 //find the number of words corresponding to each letter of the alphabet from the files listed in the Mapper_i file
-//case insensitive
 //path: path of the file containing file paths to be analyzed 
 //fdout: where to write the results of the mapping (freq array)
 void map(char* path, int fdout){
-	//open file at path
-	//this file contains a list of file paths to count frequencies
+	//open file at path which contains a list of file paths
 	FILE *file;
 	file = fopen(path,"r");
 
 	char buff[100];
 
-	//freq tracks the frequency of words starting with each letter a-z
-	//freq[0] is the frequency of words starting with 'a'
-	//freq[1] is the frequency of words starting with 'b'
+	//freq tracks the number of occurances of each letter.
+	//freq[0] is the number of a's
+	//freq[1] is the number of b's
 	//etc
 	int freq[26];
 	for(int i =0;i<26;i++){
@@ -45,21 +43,19 @@ void map(char* path, int fdout){
 		if(look == NULL){
 			perror("Failed to open file");
 			return;
-		}else{
-			printf("Opened %s\n",buff);
 		}
 		
 		while (fgets(buff,100, look) != NULL){
 			//buff is a line (word) from the file
 			//printf("%s",buff);
-			char start = tolower(buff[0]);
-			//add to the appropriate counter in freq
-			freq[start-97] += 1;
+			for (int i = 0; i < strlen(buff);i ++ ){
+				//add to the appropriate counter in freq
+				freq[tolower(buff[i])-97] += 1;
+				//printf("%c\n",tolower(buff[0]));
+			}
+	
 		}
 		fclose(look);
-		
-		
-
 		
 	}
 
@@ -73,97 +69,24 @@ void map(char* path, int fdout){
 
 
 
-void reduce(int fds[], int pids[], int count){
-	printf("%d processes to wait for\n",count);
 
-	int totals[26];
-	for (int i = 0; i < 26; i++){
-		totals[i] = 0;
-	}
-
-	int num_found = 0;
-	int is_found[count];
-	for (int i = 0; i<count;i++){
-		is_found[i] = 0;
-	}
-
-	int read_end_fd = -1;
-
-	int finished_pid;
-
-	//waits for children to finish
-	//while((finished_pid = wait(NULL)) > 0);
-
-	
-
-	while((finished_pid = wait(NULL)) > 0 || num_found < count){
-		
-		if (finished_pid <= 0){
-			//all threads done, choose any not previously done
-			for (int c = 0; c < count; c++){
-				if(!is_found[c]){
-					read_end_fd = fds[c];
-					is_found[c] = 1;
-					num_found++;
-					break;
-				}
-			}
-		}else{
-
-			for (int c = 0; c < count; c++){
-				if(finished_pid == pids[c]){
-					read_end_fd = fds[c];
-					is_found[c] = 1;
-					num_found++;
-					break;
-				}else{
-				}
-			} 
-		}
-		if(read_end_fd != -1){
-			
-			int ret[26];
-			if (read(read_end_fd, ret, sizeof(ret)) != 0){
-				for(int i =0;i<26;i++){
-					totals[i] += ret[i];
-				}
-			}else{
-				printf("failed to get result from mapper process.\n");
-			}
-
-			close(read_end_fd);
-			read_end_fd = -1;
-		}else{
-			printf("Did not find a result for child process\n");
-		}
-	}
-
-	FILE *out;
-	out = fopen("ReducerResult.txt","w+");
-	for(int i =0;i<26;i++){
-		fprintf(out,"%c %d\n",i+97,totals[i]);
-	}
-	fclose(out);
-
-	return;
-
-}
-
-void master(){
-	char path[] = "./TestInput";
+//n is the number of mapper_i files in mapper input
+void master(int n){
+	char path[] = "./MapperInput";
 
 	//open the directory /MapperInput
-	//get number of files in /MapperInput, n
 	DIR *dr = opendir( path);
 	if(dr == NULL){
 		printf("Could not open MapperInput\n" );
 		return;
 	}
 
-	//10 is max mapper input files
-	int fds[10];
-	pid_t pids[10];
-	for (int i = 0; i < 10; i++){
+	//create array of n file descriptors to pass to reduce
+	int fds[n];
+	//create array of n pids to pass to reduce
+	pid_t pids[n];
+	//initialize fds as invalid
+	for (int i = 0; i < n; i++){
 		fds[i] = -1;
 	}
 
