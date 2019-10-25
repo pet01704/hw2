@@ -1,0 +1,20 @@
+
+Names: Tseki Lhamo: lhamo012, Daniel Perterson: pet
+
+Purpose:
+- Phase1: Create MapperInput directory; Traverse through directory tree; Add file paths to MapperINput_m.txt file where m is the file number. m should not exceed the #mappers value the
+user passed in.
+- Phase2: Creates m number of pipes; Spawns mapper processe; Opens each filepath from MapperInput; Find the number of words for each letter
+Sned information to the reducer process with a pipe from each mapper.
+- Phase3: Receives lists from mapper and combines it into a single list; write this list to ReducerREsult.txt
+- Phase4: Take ReducerResult.txt and direct it to standard output. Standard output should be redirected to FinalResult.txt
+
+What it does:
+- Calculates the number of words corresponding to each letter using mapreduce 
+
+Compilation:
+./mapreduce folderName #mappers
+
+Contributions:
+- Tseki: Phase1
+- Daniel: Phase2, 3, 4
