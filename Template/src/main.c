@@ -5,6 +5,7 @@
 
 #include "../include/main.h"
 #include "../include/phase1.h"
+#include "../include/phase2.h"
 
 int main(int argc, char *argv[]){
 
@@ -39,6 +40,7 @@ int main(int argc, char *argv[]){
 	
 	//just make a function call to code in phase2.c
 	//phase2 - Map Function
+	master();
 
 	//just make a function call to code in phase3.c
 	//phase3 - Reduce Function
