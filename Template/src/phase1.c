@@ -107,7 +107,6 @@ void traverse(char* path) {
 					strcat(mappername, "/MapperInput/Mapper_");
 
 					if(m >= mc) {
-						printf("here");
 						sprintf(result, "%d", m%(int)mc);
 					} else {
 						sprintf(result, "%d", m);
